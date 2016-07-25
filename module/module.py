@@ -168,7 +168,8 @@ class Graphite_broker(BaseModule):
             logger.info("[Graphite] time to flush %d cached metrics packet(s) (%2.4f)", commit_count, time() - now)
 
         try:
-            self.con.sendall(packet)
+            # Ensure that one and only one "\n" ends the packet
+            self.con.sendall(packet.rstrip() + "\n")
             logger.debug("[Graphite] Data sent to Carbon: \n%s", packet)
         except IOError:
             logger.warning("[Graphite] Failed sending data to the Graphite Carbon instance !"
